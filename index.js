@@ -31,8 +31,8 @@ app.get('/api/hello', function(req, res) {
 // Helper to check if a URL is valid
 const checkURL = (u) => {
 	try {
-		new URL(u);
-		return true;
+		let link = new URL(u);
+		return link.protocol === "http:";
 	} catch (e) {
 		return false;
 	}
@@ -41,13 +41,14 @@ const checkURL = (u) => {
 // URL Shortener API endpoint
 app.route('/api/shorturl').post(function(req, res) {
 	if (checkURL(req.body.url)) {
-		res.json({ original_url: req.body.url, short_url: ShortURLs.length });
+		res.json({ original_url: req.body.url, short_url: ShortURLs.length+1 });
 		ShortURLs.push(req.body.url);
 	} else {
 		res.json({ error: "invalid url" });
 	}
 });
 
+// Redirecter
 app.get('/api/shorturl/:index', function(req, res, next) {
 	let index = req.params.index;
 	if (index < 1) {
